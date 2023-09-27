@@ -1,29 +1,31 @@
 import React, { useState } from "react";
 import {
-  Button,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import Logo from "./assets/Logo.svg";
+import Logo from "../assets/Logo.svg";
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
   const [login, setLogin] = useState<string | null>();
   const [senha, setSenha] = useState<string | null>();
   const [resultado, setResultado] = useState<string | null>();
 
+  const navigation = useNavigation();
+
   const handleLogin = () => {
     if (login === "admin" && senha === "1234") {
-      setResultado("Logado");
+      navigation.navigate("Home" as never)
     } else {
       setResultado("Combinação de usuário e senha inválida");
     }
   };
 
   return (
-    <>
+    <View style={styles.container}>
       <Logo height={40} />
 
       <View style={styles.input_group}>
@@ -41,11 +43,19 @@ const Login = () => {
       </TouchableOpacity>
 
       <Text style={styles.input_text}>{resultado}</Text>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    rowGap: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
   input_group: {
     display: "flex",
     flexDirection: "column",
