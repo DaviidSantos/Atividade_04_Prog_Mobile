@@ -1,119 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import axios from 'axios';
-import { BarChart } from 'react-native-chart-kit';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Post, Products } from "../types/Posts";
+import { axiosConfig } from "../lib/axios";
+import { ListItem, Avatar, Divider } from "@rneui/base";
+import { ListItemContent } from "@rneui/base/dist/ListItem/ListItem.Content";
+import { ListItemSubtitle } from "@rneui/base/dist/ListItem/ListItem.Subtitle";
+import { ListItemTitle } from "@rneui/base/dist/ListItem/ListItem.Title";
 
 const Home = () => {
-  const [dashboard, setDashboard] = useState({
-    solicitacoes: 25,
-    solicitantes: 5,
-    itensDeAnalise: {
-      _sum: {
-        quantidadeDisponivel: 300,
-      },
-    },
-    ensaiosPendente: 2,
-    ensaiosEmAndamento: 10,
-    ensaiosConcluidos: 20,
-  });
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const data = {
-    labels: ['Pendente', 'Em Andamento', 'Concluídos'],
-    datasets: [
-      {
-        data: [dashboard.ensaiosPendente, dashboard.ensaiosEmAndamento, dashboard.ensaiosConcluidos],
-      },
-    ],
-  };
+  useEffect(() => {
+    axiosConfig.get("posts").then((resposta) => {
+      setPosts(resposta.data.posts);
+    });
+  }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Dashboard</Text>
-        <Text style={styles.subHeaderText}>Visão geral das informações do laboratório</Text>
-      </View>
-  
-      <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Total de Solicitações de Análise: {dashboard.solicitacoes}</Text>
-        <Text style={styles.infoText}>Total de solicitantes cadastrados: {dashboard.solicitantes}</Text>
-        <Text style={styles.infoText}>Total de itens de análise disponíveis: {dashboard.itensDeAnalise._sum.quantidadeDisponivel}</Text>
-      </View>
-  
-      <View style={styles.chartContainer}>
-        <Text style={styles.chartHeaderText}>Ensaios</Text>
-        <BarChart
-          data={data}
-          width={350}
-          height={200}
-          yAxisLabel=""
-          yAxisSuffix=""
-          chartConfig={{
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16,
-            },
-          }}
-          fromZero={true} // Esta é a nova configuração
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-          }}
-        />
-        <Text style={styles.chartStatusText}>Status dos ensaios no laboratório</Text>
-      </View>
-    </View>
+    <ScrollView>
+      {posts.map((product) => (
+        <>
+          <ListItem key={product.id}>
+            <ListItemContent>
+              <ListItemTitle style={styles.title}>
+                {product.title}
+              </ListItemTitle>
+              <ListItemSubtitle style={styles.text}>{product.body}</ListItemSubtitle>
+              <ListItemSubtitle style={styles.likes}>{product.reactions} likes</ListItemSubtitle>
+            </ListItemContent>
+          </ListItem>
+          <Divider />
+        </>
+      ))}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    backgroundColor: '#f5f5f5',
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
+  text: {
+    color: "gray"
   },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    color: '#333',
-  },
-  subHeaderText: {
-    fontSize: 16,
-    color: '#555',
-  },
-  infoContainer: {
-    marginBottom: 20,
-  },
-  infoText: {
-    fontWeight: 'bold',
-    marginBottom: 8,
-    fontSize: 16,
-    color: '#333',
-  },
-  chartContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-  },
-  chartHeaderText: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 8,
-    color: '#333',
-  },
-  chartStatusText: {
-    fontSize: 14,
-    color: '#555',
-  },
+  likes: {
+    fontSize: 10,
+    marginTop: 12,
+    textAlign: "right",
+    width: "100%",
+    color: "gray"
+  }
 });
 
 export default Home;
