@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { Post, Products } from "../types/Posts";
+import { StyleSheet, ScrollView } from "react-native";
+import { Post } from "../types/Posts";
 import { axiosConfig } from "../lib/axios";
 import { ListItem, Avatar, Divider } from "@rneui/base";
 import { ListItemContent } from "@rneui/base/dist/ListItem/ListItem.Content";
